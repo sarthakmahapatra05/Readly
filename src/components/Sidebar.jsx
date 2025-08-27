@@ -2,12 +2,7 @@ import { Button } from "@/components/ui/button";
 import { X, BookOpen, PenTool, Info, Mail, LogIn, UserPlus, Heart } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
-interface SidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
+export function Sidebar({ isOpen, onClose }) {
   const location = useLocation();
 
   const navItems = [
@@ -18,7 +13,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { name: "Contact", path: "/contact", icon: Mail },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path) => location.pathname === path;
 
   return (
     <>

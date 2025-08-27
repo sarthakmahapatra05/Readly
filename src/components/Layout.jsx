@@ -2,11 +2,7 @@ import { useState, useEffect } from "react";
 import { Navbar } from "./Navbar";
 import { Sidebar } from "./Sidebar";
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-export function Layout({ children }: LayoutProps) {
+export function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 

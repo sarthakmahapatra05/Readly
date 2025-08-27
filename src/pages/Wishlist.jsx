@@ -41,7 +41,7 @@ export function Wishlist() {
     }
   ]);
 
-  const handleBookAction = (action: string, title: string) => {
+  const handleBookAction = (action, title) => {
     if (action === "remove from wishlist") {
       setWishlistBooks(prev => prev.filter(book => book.title !== title));
     } else {
@@ -49,7 +49,7 @@ export function Wishlist() {
     }
   };
 
-  const handleRemoveFromWishlist = (title: string) => {
+  const handleRemoveFromWishlist = (title) => {
     setWishlistBooks(prev => prev.filter(book => book.title !== title));
   };
 

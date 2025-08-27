@@ -75,7 +75,7 @@ export function Read() {
     return matchesSearch && matchesCategory;
   });
 
-  const handleBookAction = (action: string, title: string) => {
+  const handleBookAction = (action, title) => {
     alert(`Please sign in to ${action} "${title}"`);
   };
 

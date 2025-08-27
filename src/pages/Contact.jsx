@@ -14,14 +14,14 @@ export function Contact() {
     message: ""
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     alert("Thank you for your message! We'll get back to you soon.");
     setFormData({ name: "", email: "", subject: "", message: "" });

@@ -3,22 +3,6 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Headphones, Heart, MessageCircle, ThumbsUp, Clock } from "lucide-react";
 
-interface BookCardProps {
-  title: string;
-  author: string;
-  summary: string;
-  duration: string;
-  category: string;
-  likes: number;
-  comments: number;
-  isWishlisted?: boolean;
-  onRead: () => void;
-  onListen: () => void;
-  onWishlist: () => void;
-  onComment: () => void;
-  onLike: () => void;
-}
-
 export function BookCard({
   title,
   author,
@@ -33,7 +17,7 @@ export function BookCard({
   onWishlist,
   onComment,
   onLike,
-}: BookCardProps) {
+}) {
   return (
     <Card className="group hover:shadow-elegant transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-parchment">
       <CardContent className="p-6">

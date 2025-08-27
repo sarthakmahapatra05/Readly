@@ -3,13 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, Moon, Sun, BookOpen } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
-interface NavbarProps {
-  onToggleSidebar: () => void;
-  isDarkMode: boolean;
-  onToggleDarkMode: () => void;
-}
-
-export function Navbar({ onToggleSidebar, isDarkMode, onToggleDarkMode }: NavbarProps) {
+export function Navbar({ onToggleSidebar, isDarkMode, onToggleDarkMode }) {
   const location = useLocation();
 
   const navItems = [
@@ -19,7 +13,7 @@ export function Navbar({ onToggleSidebar, isDarkMode, onToggleDarkMode }: Navbar
     { name: "Contact", path: "/contact" },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path) => location.pathname === path;
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border shadow-sm">

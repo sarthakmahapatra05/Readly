@@ -36,7 +36,7 @@ export function Home() {
     },
   ];
 
-  const handleBookAction = (action: string, title: string) => {
+  const handleBookAction = (action, title) => {
     // In a real app, these would navigate or show auth modals
     alert(`Please sign in to ${action} "${title}"`);
   };
