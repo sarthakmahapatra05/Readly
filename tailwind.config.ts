@@ -52,6 +52,11 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// Readly custom colors
+				'book-spine': 'hsl(var(--book-spine))',
+				'parchment': 'hsl(var(--parchment))',
+				'leather': 'hsl(var(--leather))',
+				'gold-highlight': 'hsl(var(--gold-highlight))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
