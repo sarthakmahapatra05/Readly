@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { Navbar } from "./Navbar";
-import { Sidebar } from "./Sidebar";
+import { AppSidebar } from "./Sidebar";
 import { Footer } from "./Footer";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 export function Layout({ children }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Load dark mode preference from localStorage
@@ -25,26 +25,26 @@ export function Layout({ children }) {
     localStorage.setItem("readly-dark-mode", JSON.stringify(isDarkMode));
   }, [isDarkMode]);
 
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-  const closeSidebar = () => setSidebarOpen(false);
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
   return (
-    <>
-      <Navbar
-        onToggleSidebar={toggleSidebar}
-        isDarkMode={isDarkMode}
-        onToggleDarkMode={toggleDarkMode}
-      />
-      
-      <div className="flex">
-        <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+    <SidebarProvider collapsedWidth={56}>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
         
-        <main className="flex-1 lg:ml-64 transition-all duration-300">
-          {children}
-        </main>
+        <div className="flex-1 flex flex-col">
+          <Navbar
+            isDarkMode={isDarkMode}
+            onToggleDarkMode={toggleDarkMode}
+          />
+          
+          <main className="flex-1">
+            {children}
+          </main>
+          
+          <Footer />
+        </div>
       </div>
-      <Footer />
-    </>
+    </SidebarProvider>
   );
 }

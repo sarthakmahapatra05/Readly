@@ -1,9 +1,9 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, Moon, Sun, BookOpen } from "lucide-react";
+import { Moon, Sun, BookOpen } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
-export function Navbar({ onToggleSidebar, isDarkMode, onToggleDarkMode }) {
+export function Navbar({ isDarkMode, onToggleDarkMode }) {
   const location = useLocation();
 
   const navItems = [
@@ -19,16 +19,9 @@ export function Navbar({ onToggleSidebar, isDarkMode, onToggleDarkMode }) {
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Left side - Menu button and Logo */}
+          {/* Left side - Sidebar trigger and Logo */}
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onToggleSidebar}
-              className="lg:hidden"
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
+            <SidebarTrigger className="md:hidden" />
             
             <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <BookOpen className="h-8 w-8 text-accent" />
