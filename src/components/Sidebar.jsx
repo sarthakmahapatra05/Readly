@@ -1,4 +1,4 @@
-import { BookOpen, PenTool, Info, Mail, LogIn, UserPlus, Heart } from "lucide-react";
+import { BookOpen, PenTool, Info, Mail, LogIn, UserPlus, Heart, Home, LayoutDashboard } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,8 +20,10 @@ export function AppSidebar() {
   const currentPath = location.pathname;
 
   const navItems = [
+    { name: "Home", path: "/", icon: Home },
     { name: "Read", path: "/read", icon: BookOpen },
     { name: "Write", path: "/write", icon: PenTool },
+    { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     { name: "Wishlist", path: "/wishlist", icon: Heart },
     { name: "About", path: "/about", icon: Info },
     { name: "Contact", path: "/contact", icon: Mail },
@@ -71,14 +73,12 @@ export function AppSidebar() {
         {/* Auth buttons */}
         {!collapsed && (
           <div className="mt-auto p-4 border-t border-border space-y-2">
-            <Button variant="default" className="w-full">
-              <LogIn className="h-4 w-4 mr-2" />
-              Sign In
-            </Button>
-            <Button variant="outline" className="w-full">
-              <UserPlus className="h-4 w-4 mr-2" />
-              Sign Up
-            </Button>
+            <NavLink to="/auth">
+              <Button variant="default" className="w-full">
+                <LogIn className="h-4 w-4 mr-2" />
+                Sign In
+              </Button>
+            </NavLink>
           </div>
         )}
       </SidebarContent>

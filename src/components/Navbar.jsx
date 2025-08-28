@@ -7,8 +7,10 @@ export function Navbar({ isDarkMode, onToggleDarkMode }) {
   const location = useLocation();
 
   const navItems = [
+    { name: "Home", path: "/" },
     { name: "Read", path: "/read" },
     { name: "Write", path: "/write" },
+    { name: "Dashboard", path: "/dashboard" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];

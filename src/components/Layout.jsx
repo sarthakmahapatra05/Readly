@@ -28,7 +28,7 @@ export function Layout({ children }) {
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
   return (
-    <SidebarProvider collapsedWidth={56}>
+    <SidebarProvider defaultOpen={false} collapsedWidth={56}>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         
