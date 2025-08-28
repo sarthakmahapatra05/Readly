@@ -21,19 +21,18 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Layout>
+        <div className="min-h-screen bg-background">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/read" element={<Read />} />
-            <Route path="/write" element={<Write />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/" element={<Layout><Home /></Layout>} />
+            <Route path="/read" element={<Layout><Read /></Layout>} />
+            <Route path="/write" element={<Layout><Write /></Layout>} />
+            <Route path="/about" element={<Layout><About /></Layout>} />
+            <Route path="/contact" element={<Layout><Contact /></Layout>} />
+            <Route path="/wishlist" element={<Layout><Wishlist /></Layout>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
+            <Route path="*" element={<Layout><NotFound /></Layout>} />
           </Routes>
-          <Footer />
-        </Layout>
+        </div>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

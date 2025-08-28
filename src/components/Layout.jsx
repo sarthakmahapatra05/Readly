@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Navbar } from "./Navbar";
 import { Sidebar } from "./Sidebar";
+import { Footer } from "./Footer";
 
 export function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -29,7 +30,7 @@ export function Layout({ children }) {
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
       <Navbar
         onToggleSidebar={toggleSidebar}
         isDarkMode={isDarkMode}
@@ -43,6 +44,7 @@ export function Layout({ children }) {
           {children}
         </main>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 }
