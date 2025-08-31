@@ -10,6 +10,15 @@ import { useNavigate } from "react-router-dom";
 
 export function Dashboard() {
   const [user, setUser] = useState(null);
+  const [stats, setStats] = useState({
+    totalReads: 0,
+    totalWrites: 0,
+    currentStreak: 7,
+    totalPoints: 0,
+    rank: "Bronze Reader",
+    nextRank: "Silver Reader",
+    pointsToNext: 550
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,20 +28,50 @@ export function Dashboard() {
         navigate("/auth");
       } else {
         setUser(session.user);
+        fetchUserStats(session.user.id);
       }
     };
     checkUser();
   }, [navigate]);
 
-  // Mock data for badges and stats
+  const fetchUserStats = async (userId) => {
+    try {
+      // Fetch reading progress
+      const { data: readingData } = await supabase
+        .from('user_reading_progress')
+        .select('*')
+        .eq('user_id', userId);
+
+      // Fetch written summaries
+      const { data: writingData } = await supabase
+        .from('user_summaries')
+        .select('*')
+        .eq('user_id', userId);
+
+      const totalReads = readingData?.length || 0;
+      const totalWrites = writingData?.length || 0;
+      const totalPoints = (totalReads * 10) + (totalWrites * 25);
+
+      setStats(prev => ({
+        ...prev,
+        totalReads,
+        totalWrites,
+        totalPoints
+      }));
+    } catch (error) {
+      console.error('Error fetching user stats:', error);
+    }
+  };
+
+  // Badges data with dynamic progress
   const badges = [
     {
       id: 1,
       name: "First Steps Reader",
       description: "Read your first book summary",
       icon: BookOpen,
-      earned: true,
-      progress: 100,
+      earned: stats.totalReads >= 1,
+      progress: Math.min(stats.totalReads * 100, 100),
       category: "Reading"
     },
     {
@@ -40,8 +79,8 @@ export function Dashboard() {
       name: "Speed Reader",
       description: "Read 10 book summaries",
       icon: TrendingUp,
-      earned: true,
-      progress: 100,
+      earned: stats.totalReads >= 10,
+      progress: Math.min((stats.totalReads / 10) * 100, 100),
       category: "Reading"
     },
     {
@@ -58,8 +97,8 @@ export function Dashboard() {
       name: "Community Writer",
       description: "Write your first book summary",
       icon: PenTool,
-      earned: true,
-      progress: 100,
+      earned: stats.totalWrites >= 1,
+      progress: Math.min(stats.totalWrites * 100, 100),
       category: "Writing"
     },
     {
@@ -67,8 +106,8 @@ export function Dashboard() {
       name: "Prolific Writer",
       description: "Write 5 book summaries",
       icon: Star,
-      earned: false,
-      progress: 40,
+      earned: stats.totalWrites >= 5,
+      progress: Math.min((stats.totalWrites / 5) * 100, 100),
       category: "Writing"
     },
     {
@@ -85,21 +124,12 @@ export function Dashboard() {
       name: "Reading Champion",
       description: "Read 50 book summaries",
       icon: Trophy,
-      earned: false,
-      progress: 32,
+      earned: stats.totalReads >= 50,
+      progress: Math.min((stats.totalReads / 50) * 100, 100),
       category: "Reading"
     }
   ];
 
-  const stats = {
-    totalReads: 16,
-    totalWrites: 2,
-    currentStreak: 7,
-    totalPoints: 450,
-    rank: "Bronze Reader",
-    nextRank: "Silver Reader",
-    pointsToNext: 550
-  };
 
   const recentActivity = [
     { id: 1, type: "read", title: "Atomic Habits", time: "2 hours ago" },

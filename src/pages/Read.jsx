@@ -1,83 +1,86 @@
-import { useState } from "react";
-import { BookCard } from "@/components/BookCard";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Search, Filter } from "lucide-react";
+import { BookOpen, Clock, User, Star, Search } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 export function Read() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [books, setBooks] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [user, setUser] = useState(null);
+  const [readBooks, setReadBooks] = useState(new Set());
+  const navigate = useNavigate();
 
-  const categories = ["All", "Self-Help", "Finance", "Productivity", "Health", "Technology", "Fiction"];
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/auth");
+      } else {
+        setUser(session.user);
+        fetchBooks();
+        fetchReadBooks(session.user.id);
+      }
+    };
+    checkUser();
+  }, [navigate]);
 
-  const books = [
-    {
-      title: "Atomic Habits",
-      author: "James Clear",
-      summary: "Discover the power of small changes that lead to remarkable results. Learn how to build good habits and break bad ones through practical strategies backed by science.",
-      duration: "1 min",
-      category: "Self-Help",
-      likes: 234,
-      comments: 45,
-    },
-    {
-      title: "The Psychology of Money",
-      author: "Morgan Housel",
-      summary: "Understand how people think about money and make financial decisions. Timeless lessons on wealth, greed, and happiness that will change your perspective.",
-      duration: "1 min",
-      category: "Finance",
-      likes: 187,
-      comments: 32,
-    },
-    {
-      title: "Deep Work",
-      author: "Cal Newport",
-      summary: "Learn to focus without distraction in a hyperconnected world. Master the ability to produce at an elite level in an increasingly competitive economy.",
-      duration: "1 min",
-      category: "Productivity",
-      likes: 156,
-      comments: 28,
-    },
-    {
-      title: "Sapiens",
-      author: "Yuval Noah Harari",
-      summary: "A brief history of humankind from the Stone Age to the modern age. Discover how Homo sapiens came to dominate the world through cognitive revolution.",
-      duration: "1 min",
-      category: "History",
-      likes: 203,
-      comments: 67,
-    },
-    {
-      title: "The 7 Habits of Highly Effective People",
-      author: "Stephen Covey",
-      summary: "Transform your personal and professional life with principles that will help you be more productive, focused, and fulfilled in everything you do.",
-      duration: "1 min",
-      category: "Self-Help",
-      likes: 145,
-      comments: 23,
-    },
-    {
-      title: "Thinking, Fast and Slow",
-      author: "Daniel Kahneman",
-      summary: "Explore the two systems that drive the way we think. Understand cognitive biases and learn how to make better decisions in life and business.",
-      duration: "1 min",
-      category: "Psychology",
-      likes: 178,
-      comments: 41,
-    },
-  ];
+  const fetchBooks = async () => {
+    const { data, error } = await supabase
+      .from('books')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching books:', error);
+    } else {
+      setBooks(data || []);
+    }
+  };
 
+  const fetchReadBooks = async (userId) => {
+    const { data, error } = await supabase
+      .from('user_reading_progress')
+      .select('book_id')
+      .eq('user_id', userId);
+    
+    if (error) {
+      console.error('Error fetching read books:', error);
+    } else {
+      const readBookIds = new Set(data.map(item => item.book_id));
+      setReadBooks(readBookIds);
+    }
+  };
+
+  const markAsRead = async (bookId) => {
+    if (!user) return;
+    
+    const { error } = await supabase
+      .from('user_reading_progress')
+      .insert({
+        user_id: user.id,
+        book_id: bookId
+      });
+    
+    if (error) {
+      console.error('Error marking book as read:', error);
+    } else {
+      setReadBooks(prev => new Set([...prev, bookId]));
+    }
+  };
+
+  const categories = ["All", ...new Set(books.map(book => book.category))];
+  
   const filteredBooks = books.filter(book => {
     const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          book.author.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "All" || book.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
-
-  const handleBookAction = (action, title) => {
-    alert(`Please sign in to ${action} "${title}"`);
-  };
 
   return (
     <div className="min-h-screen p-6">
@@ -86,7 +89,7 @@ export function Read() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-4">Book Summaries</h1>
           <p className="text-xl text-muted-foreground">
-            Discover insights from the world's best books in just 1 minute
+            Discover insights from the world's best books in just minutes
           </p>
         </div>
 
@@ -119,15 +122,47 @@ export function Read() {
         {/* Books Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {filteredBooks.map((book) => (
-            <BookCard
-              key={book.title}
-              {...book}
-              onRead={() => handleBookAction("read", book.title)}
-              onListen={() => handleBookAction("listen to", book.title)}
-              onWishlist={() => handleBookAction("wishlist", book.title)}
-              onComment={() => handleBookAction("comment on", book.title)}
-              onLike={() => handleBookAction("like", book.title)}
-            />
+            <Card key={book.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-start justify-between mb-2">
+                  <Badge variant="outline">{book.category}</Badge>
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4 text-gold-highlight fill-current" />
+                    <span className="text-sm text-muted-foreground">4.5</span>
+                  </div>
+                </div>
+                <CardTitle className="text-xl">{book.title}</CardTitle>
+                <CardDescription className="flex items-center gap-2 text-muted-foreground">
+                  <User className="h-4 w-4" />
+                  {book.author}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground line-clamp-3">
+                  {book.summary}
+                </p>
+                
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">{book.reading_time} min read</span>
+                  </div>
+                  <Badge variant={readBooks.has(book.id) ? "default" : "secondary"}>
+                    {readBooks.has(book.id) ? "Completed" : "New"}
+                  </Badge>
+                </div>
+                
+                <Button 
+                  className="w-full" 
+                  variant={readBooks.has(book.id) ? "outline" : "default"}
+                  onClick={() => markAsRead(book.id)}
+                  disabled={readBooks.has(book.id)}
+                >
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  {readBooks.has(book.id) ? "Completed" : "Mark as Read"}
+                </Button>
+              </CardContent>
+            </Card>
           ))}
         </div>
 
@@ -136,15 +171,6 @@ export function Read() {
             <p className="text-muted-foreground text-lg">
               No books found matching your criteria. Try adjusting your search or filters.
             </p>
-          </div>
-        )}
-
-        {/* Load More */}
-        {filteredBooks.length > 0 && (
-          <div className="text-center">
-            <Button variant="elegant">
-              Load More Books
-            </Button>
           </div>
         )}
       </div>

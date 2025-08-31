@@ -1,52 +1,77 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { PenTool, BookOpen, Upload, Eye, Heart, MessageCircle } from "lucide-react";
+import { PenTool, BookOpen, Send, Eye, MessageCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 export function Write() {
   const [formData, setFormData] = useState({
-    title: "",
-    author: "",
-    category: "",
-    summary: "",
-    keyTakeaways: "",
+    bookTitle: "",
+    summary: ""
   });
+  const [user, setUser] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userSummaries, setUserSummaries] = useState([]);
+  const navigate = useNavigate();
 
-  const userBooks = [
-    {
-      title: "The Minimalist Entrepreneur",
-      author: "Sahil Lavingia",
-      category: "Business",
-      likes: 23,
-      comments: 8,
-      views: 156,
-      dateAdded: "2 days ago"
-    },
-    {
-      title: "Digital Minimalism",
-      author: "Cal Newport", 
-      category: "Technology",
-      likes: 45,
-      comments: 12,
-      views: 234,
-      dateAdded: "1 week ago"
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/auth");
+      } else {
+        setUser(session.user);
+        fetchUserSummaries(session.user.id);
+      }
+    };
+    checkUser();
+  }, [navigate]);
+
+  const fetchUserSummaries = async (userId) => {
+    const { data, error } = await supabase
+      .from('user_summaries')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching user summaries:', error);
+    } else {
+      setUserSummaries(data || []);
     }
-  ];
-
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Please sign in to submit your book summary");
+    if (!user) return;
+    
+    setIsSubmitting(true);
+    const { error } = await supabase
+      .from('user_summaries')
+      .insert({
+        user_id: user.id,
+        book_title: formData.bookTitle,
+        summary_content: formData.summary
+      });
+    
+    if (error) {
+      console.error('Error submitting summary:', error);
+      alert("Error submitting summary. Please try again.");
+    } else {
+      alert("Thank you for your contribution!");
+      setFormData({ bookTitle: "", summary: "" });
+      fetchUserSummaries(user.id);
+    }
+    setIsSubmitting(false);
+  };
+
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -56,7 +81,7 @@ export function Write() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-4">Share Your Book Summary</h1>
           <p className="text-xl text-muted-foreground">
-            Help others discover great books by sharing your 1-minute summary
+            Help others discover great books by sharing your insights
           </p>
         </div>
 
@@ -72,126 +97,65 @@ export function Write() {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <Label htmlFor="title">Book Title</Label>
+                  <Label htmlFor="bookTitle">Book Title</Label>
                   <Input
-                    id="title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleInputChange}
+                    id="bookTitle"
+                    value={formData.bookTitle}
+                    onChange={(e) => handleChange("bookTitle", e.target.value)}
                     placeholder="Enter the book title"
                     required
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="author">Author</Label>
-                  <Input
-                    id="author"
-                    name="author"
-                    value={formData.author}
-                    onChange={handleInputChange}
-                    placeholder="Enter the author's name"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="category">Category</Label>
-                  <Input
-                    id="category"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    placeholder="e.g., Self-Help, Business, Fiction"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="summary">1-Minute Summary</Label>
+                  <Label htmlFor="summary">Your Summary</Label>
                   <Textarea
                     id="summary"
-                    name="summary"
                     value={formData.summary}
-                    onChange={handleInputChange}
-                    placeholder="Write a compelling 1-minute summary that captures the book's main ideas..."
-                    rows={6}
+                    onChange={(e) => handleChange("summary", e.target.value)}
+                    placeholder="Write your book summary here..."
+                    rows={8}
                     required
                   />
                   <p className="text-sm text-muted-foreground mt-1">
-                    Aim for 150-200 words for a perfect 1-minute read
+                    Share the key insights and takeaways from this book
                   </p>
                 </div>
 
-                <div>
-                  <Label htmlFor="keyTakeaways">Key Takeaways (Optional)</Label>
-                  <Textarea
-                    id="keyTakeaways"
-                    name="keyTakeaways"
-                    value={formData.keyTakeaways}
-                    onChange={handleInputChange}
-                    placeholder="List 3-5 key takeaways or actionable insights..."
-                    rows={4}
-                  />
-                </div>
-
-                <div className="flex gap-2">
-                  <Button type="submit" variant="hero" className="flex-1">
-                    <Upload className="h-4 w-4 mr-2" />
-                    Submit Summary
-                  </Button>
-                  <Button type="button" variant="elegant">
-                    <Eye className="h-4 w-4 mr-2" />
-                    Preview
-                  </Button>
-                </div>
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  <Send className="h-4 w-4 mr-2" />
+                  {isSubmitting ? "Submitting..." : "Submit Summary"}
+                </Button>
               </form>
             </CardContent>
           </Card>
 
-          {/* User's Books */}
+          {/* User's Summaries */}
           <div>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <BookOpen className="h-5 w-5 text-accent" />
-                  Your Contributions
+                  Your Contributions ({userSummaries.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {userBooks.map((book, index) => (
-                    <div key={index} className="p-4 border border-border rounded-lg hover:bg-accent/5 transition-colors">
+                  {userSummaries.map((summary) => (
+                    <div key={summary.id} className="p-4 border border-border rounded-lg hover:bg-accent/5 transition-colors">
                       <div className="space-y-2">
-                        <div className="flex items-start justify-between">
-                          <h4 className="font-medium text-foreground">{book.title}</h4>
-                          <Badge variant="outline" className="text-xs">
-                            {book.category}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">by {book.author}</p>
-                        
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <Eye className="h-3 w-3" />
-                            {book.views}
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Heart className="h-3 w-3" />
-                            {book.likes}
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <MessageCircle className="h-3 w-3" />
-                            {book.comments}
-                          </div>
-                        </div>
-                        
-                        <p className="text-xs text-muted-foreground">Added {book.dateAdded}</p>
+                        <h4 className="font-medium text-foreground">{summary.book_title}</h4>
+                        <p className="text-sm text-muted-foreground line-clamp-3">
+                          {summary.summary_content}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Added {new Date(summary.created_at).toLocaleDateString()}
+                        </p>
                       </div>
                     </div>
                   ))}
                   
-                  {userBooks.length === 0 && (
+                  {userSummaries.length === 0 && (
                     <div className="text-center py-8">
                       <p className="text-muted-foreground">
                         You haven't shared any book summaries yet. Start by creating your first one!
@@ -209,11 +173,11 @@ export function Write() {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Keep summaries concise and engaging (150-200 words)</li>
                   <li>• Focus on the most important insights and takeaways</li>
                   <li>• Use clear, simple language that anyone can understand</li>
                   <li>• Include practical examples when possible</li>
                   <li>• Be respectful and avoid spoilers for fiction books</li>
+                  <li>• Share what made this book valuable to you</li>
                 </ul>
               </CardContent>
             </Card>
