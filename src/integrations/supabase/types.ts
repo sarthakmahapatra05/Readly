@@ -14,7 +14,125 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      books: {
+        Row: {
+          author: string
+          category: string | null
+          cover_url: string | null
+          created_at: string
+          id: string
+          reading_time: number | null
+          summary: string | null
+          title: string
+        }
+        Insert: {
+          author: string
+          category?: string | null
+          cover_url?: string | null
+          created_at?: string
+          id?: string
+          reading_time?: number | null
+          summary?: string | null
+          title: string
+        }
+        Update: {
+          author?: string
+          category?: string | null
+          cover_url?: string | null
+          created_at?: string
+          id?: string
+          reading_time?: number | null
+          summary?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          first_name: string | null
+          id: string
+          last_name: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_reading_progress: {
+        Row: {
+          book_id: string
+          completed_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          completed_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          book_id?: string
+          completed_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_reading_progress_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_summaries: {
+        Row: {
+          book_title: string
+          created_at: string
+          id: string
+          summary_content: string
+          user_id: string
+        }
+        Insert: {
+          book_title: string
+          created_at?: string
+          id?: string
+          summary_content: string
+          user_id: string
+        }
+        Update: {
+          book_title?: string
+          created_at?: string
+          id?: string
+          summary_content?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
