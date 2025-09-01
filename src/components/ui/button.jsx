@@ -18,9 +18,9 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         hero: "bg-gradient-to-r from-primary to-accent text-primary-foreground hover:shadow-lg hover:scale-105 transition-all duration-300 shadow-warm",
-        book: "bg-leather text-primary-foreground border border-book-spine hover:bg-book-spine hover:shadow-book transition-all duration-300",
-        wishlist: "bg-gold-highlight/20 text-accent border border-gold-highlight hover:bg-gold-highlight hover:text-accent-foreground hover:shadow-warm",
-        elegant: "bg-parchment text-foreground border border-border hover:bg-background hover:shadow-elegant transition-all duration-300",
+        book: "bg-primary text-primary-foreground border border-primary/50 hover:bg-primary/90 hover:shadow-book transition-all duration-300",
+        wishlist: "bg-accent/20 text-accent border border-accent hover:bg-accent hover:text-accent-foreground hover:shadow-warm",
+        elegant: "bg-secondary text-secondary-foreground border border-border hover:bg-muted hover:shadow-elegant transition-all duration-300",
       },
       size: {
         default: "h-10 px-4 py-2",
