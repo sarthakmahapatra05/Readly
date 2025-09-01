@@ -141,7 +141,13 @@ export function Home() {
             {featuredBooks.map((book) => (
               <BookCard
                 key={book.id}
-                book={book}
+                title={book.title}
+                author={book.author}
+                summary={book.summary}
+                duration={book.duration}
+                category={book.category}
+                likes={book.likes}
+                comments={book.comments}
                 onRead={() => handleBookAction('read', book.id)}
                 onListen={() => handleBookAction('listen', book.id)}
                 onComment={() => handleBookAction('comment', book.id)}
