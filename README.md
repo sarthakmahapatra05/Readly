@@ -1,7 +1,5 @@
 # Readly
 Pocket library of book summary
->>>>>>> 2080cbf66eaad4f10615b1aa6c8c66fb35f38ebc
-=======
 # Readly - Book Summary Community
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -157,4 +155,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 =======
 # Readly
 Pocket library of book summary
->>>>>>> 2080cbf66eaad4f10615b1aa6c8c66fb35f38ebc
