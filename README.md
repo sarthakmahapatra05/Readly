@@ -104,12 +104,7 @@ yarn build
 
 ### Deploy to Your Preferred Platform
 
-Readly can be deployed to various platforms:
-
-- **Vercel**: Connect your GitHub repo for automatic deployments
-- **Netlify**: Drag-and-drop the `dist` folder or connect via Git
-- **Railway**: Deploy with a single command
-- **AWS S3 + CloudFront**: For scalable static hosting
+Readly already  deployed on vercel:https://readly-eight.vercel.app/
 
 ### Environment Variables for Production
 
