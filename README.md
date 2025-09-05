@@ -127,12 +127,11 @@ We welcome contributions from the community! Here's how you can get involved:
 
 ### Development Guidelines
 
-- Follow the existing code style and conventions
-- Write clear, concise commit messages
-- Test your changes thoroughly
-- Update documentation as needed
-- Ensure all tests pass before submitting
+Deploy to Your Preferred Platform
 
+Readly is already deployed in vercel platforms:
+
+Vercel: https://readly-eight.vercel.app/
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
