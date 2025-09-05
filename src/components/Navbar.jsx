@@ -25,7 +25,7 @@ export function Navbar({ isDarkMode, onToggleDarkMode }) {
           <div className="flex items-center gap-4">
             <SidebarTrigger className="md:hidden" />
             
-            <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <Link to="/" end className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <BookOpen className="h-8 w-8 text-accent" />
               <span className="text-2xl font-bold text-primary">Readly</span>
             </Link>

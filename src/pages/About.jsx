@@ -42,12 +42,7 @@ export function About() {
               </div>
               
               <div className="flex justify-center">
-                <div className="w-64 h-64 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full flex items-center justify-center">
-                  <span className="text-6xl">👤</span>
-                  <p className="text-sm text-muted-foreground mt-4 text-center">
-                    Photo will be updated soon
-                  </p>
-                </div>
+                <img src="/founder-photo.heic" alt="Sarthak Mahapatra" className="w-64 h-64 rounded-full object-cover" />
               </div>
             </div>
           </CardContent>
